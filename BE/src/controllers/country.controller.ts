@@ -6,11 +6,15 @@ import {
   HttpException,
   HttpStatus,
   Inject,
+  Query,
   Req,
 } from '@nestjs/common';
 import { FastifyRequest } from 'fastify';
 import { BaseController } from './base.controller';
 import { CountryService } from 'src/services/country.service';
+import { JoiValidationPipe } from 'src/pipes/joi-validation';
+import { countryInfoQuerySchema } from 'src/services/validations/country';
+import { CountryInfoQuery } from 'src/types/country';
 
 @Controller('country')
 export class CountryController extends BaseController {
@@ -20,17 +24,17 @@ export class CountryController extends BaseController {
 
   @Get('available')
   @HttpCode(HttpStatus.OK)
-  async findAllAvailableCountries(@Req() req: FastifyRequest) {
-    const { countries, error } = await this.countryService.findAllAvailableCountries()
-
-    if (!error) {
-      throw new HttpException({
-        message: "Error Fetching data",
-        context: `${req.url}#0001`,
-        countries: []
-      }, HttpStatus.INTERNAL_SERVER_ERROR)
-    }
+  async findAllAvailableCountries() {
+    const countries = await this.countryService.findAllAvailableCountries()
 
     return this.output({ countries }, "Succesfully fetched data", HttpStatus.OK);
+  }
+
+  @Get('info')
+  @HttpCode(HttpStatus.OK)
+  async findCountryInfo(@Query(new JoiValidationPipe(countryInfoQuerySchema)) query: CountryInfoQuery) {
+    const countryInfo = await this.countryService.findCountryInfo(query);
+
+    return this.output({ ...countryInfo }, "Succesfully fetched data", HttpStatus.OK);
   }
 }
