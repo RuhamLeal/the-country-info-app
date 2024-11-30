@@ -9,40 +9,45 @@ import { FastifyRequest, FastifyReply } from 'fastify';
 
 @Catch()
 export class GlobalExceptionsFilter implements ExceptionFilter {
-  async catch(exception: unknown, host: ArgumentsHost) {
+  async catch(exception: Error | HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<FastifyReply>();
     const request = ctx.getRequest<FastifyRequest>();
-    const timestamp = new Date().toISOString();
+    const timestamp = new Date(Date.now());
     const path = request.url;
-    const isHttpError = exception instanceof HttpException;
 
-    const status = isHttpError
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
+    const isHttpErr = exception instanceof HttpException;
+    const status = isHttpErr ? exception.getStatus() : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const errorResponse = isHttpError
-      ? exception.getResponse()
-      : { message: 'Internal server error' };
+    const getData = () => {
+      if (isHttpErr) {
+        const resData = exception.getResponse();
+        const isStringRes = typeof resData === 'string';
 
-    const errorData =
-      typeof errorResponse === 'string'
-        ? { message: errorResponse }
-        : (errorResponse as Record<string, unknown>);
+        const result = isStringRes ? { message: resData } : resData;
 
-    const message = errorData.message || 'Internal server error';
+        return {
+          ...result,
+          message: (result as any).message || 'Internal server error'
+        };
+      }
 
-    const responseBody = {
+      return {
+        message: 'Internal server error'
+      }
+    };
+
+    const { message, ...rest } = getData();
+
+    response.code(status).send({
       status: 'error',
       code: status,
       message,
       data: {
-        timestamp,
+        timestamp: timestamp.toUTCString(),
         path,
-        ...errorData,
-      },
-    };
-
-    response.status(status).send(responseBody);
+        ...rest,
+      }
+    });
   }
 }
