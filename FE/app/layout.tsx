@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "../styles/globals.css";
+import ReactQueryProvider from "@/providers/react-query";
 
 export const metadata: Metadata = {
   title: "Countries App",
@@ -14,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body>
-        {children}
+        <ReactQueryProvider>{children}</ReactQueryProvider>
       </body>
     </html>
   );
