@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useFetchAvailableCountries } from "../../hooks/useFetchAvailableCountries";
-import { useRouter } from "next/navigation";
+import Card from "@/components/country/card";
 
 type Country = {
     countryCode: string,
@@ -12,7 +12,6 @@ type Country = {
 export default function CountriesPage() {
     const { data: res, isSuccess, isError, isLoading } = useFetchAvailableCountries();
     const [countries, setCountries] = useState<Country[]>([])
-    const router = useRouter();
 
     useEffect(() => {
         if (isSuccess && res.status === 'success') {
@@ -23,20 +22,12 @@ export default function CountriesPage() {
     if (isLoading) return <p>Carregando...</p>;
     if (isError) return <p>Error</p>;
 
-    const navigateToCountry = (countryCode: string) => {
-        router.push(`/countries/${countryCode}`);
-    };
 
     return (
-        <ul>
+        <div>
             {countries.map((country: Country) => (
-                <li
-                    key={country.countryCode}
-                    onClick={() => navigateToCountry(country.countryCode)}
-                >
-                    {country.name}/{country.countryCode}
-                </li>
+                <Card key={country.countryCode} name={country.name} code={country.countryCode} />
             ))}
-        </ul>
+        </div>
     );
 }
