@@ -18,7 +18,7 @@ type PopulationChartProps = {
 };
 
 export default function PopulationChart({ population }: PopulationChartProps) {
-    if (!population || !population?.length) return <div style={{ width: '100%', height: 300 }}>Nenhum dado de populaçao disponivel</div>;
+    if (!population || !population?.length) return <div className='flex justify-center items-center p-4 bg-slate-950 rounded-lg'>No Population data found</div>;
 
     return (
         <div style={{ width: '100%', height: 300 }}>
@@ -36,23 +36,23 @@ export default function PopulationChart({ population }: PopulationChartProps) {
                     <XAxis
 
                         dataKey="year"
-                        label={{ value: 'Ano', position: 'insideBottomLeft', offset: -10 }}
+                        label={{ value: 'Year', position: 'insideBottomLeft', offset: -10 }}
                     />
                     <YAxis
-                        label={{ value: 'População', angle: -90, position: 'insideLeft', offset: -10 }}
+                        label={{ value: 'Population', angle: -90, position: 'bottom', offset: -10 }}
                     />
                     <Tooltip
                         cursor={{ fill: 'transparent' }}
-                        formatter={(value: number) => [value.toLocaleString(), 'População']}
-                        labelFormatter={(label: number) => <span style={{ color: '#4b44f0' }}>Ano: {label}</span>}
+                        formatter={(value: number) => [value.toLocaleString(), 'Population']}
+                        labelFormatter={(label: number) => <span style={{ color: '#4b44f0' }}>Year: {label}</span>}
                     />
                     <Legend
                         layout="vertical"
                         align="center"
                         verticalAlign="bottom"
-                        formatter={() => 'População'}
+                        formatter={() => 'Population'}
                     />
-                    <Bar dataKey="value" fill="#4425d2" name="População" activeBar={<Rectangle fill="#331cb2" />} />
+                    <Bar dataKey="value" fill="#736be9" name="Population" activeBar={<Rectangle fill="#4425d2" />} />
                 </BarChart>
             </ResponsiveContainer>
         </div>
