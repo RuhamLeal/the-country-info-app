@@ -8,6 +8,10 @@ export default {
   ],
   theme: {
     extend: {
+      width: {
+        '1/2-minus-2rem': 'calc(50% - 2rem)',
+        'full-minus-2rem': 'calc(100% - 2rem)',
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
