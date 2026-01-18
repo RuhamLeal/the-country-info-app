@@ -1,4 +1,4 @@
-# The country Info App
+# The country Info App [CODE TEST CHALLENGE]
 
 # 📦 Frontend - Next 15 Setup Guide
 
